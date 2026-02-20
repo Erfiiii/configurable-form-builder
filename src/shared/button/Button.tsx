@@ -9,7 +9,7 @@ export const Button = (props: Props) => {
 
   return (
     <button
-      className={`cursor-pointer border rounded-md p-2 text-white text-sm ${className}`}
+      className={`cursor-pointer border rounded-md p-2 text-white disabled:opacity-50 disabled:cursor-not-allowed text-sm ${className}`}
       {...rest}
     >
       {children}
