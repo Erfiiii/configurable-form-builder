@@ -1,65 +1,77 @@
-import type { FormField } from "./types";
+import type { FormField, GroupFormField, ID, State } from "./types";
 
-export const addNewItemToTargetGroup = (
-  items: FormField[],
-  parentId?: string,
+export const getChildren = (
+  config: State,
+  groupField: GroupFormField,
 ): FormField[] => {
+  return groupField.childFieldIds
+    .map((item) => config.fields.get(item))
+    .filter((item) => item !== undefined);
+};
+
+export const getRootFields = (config: State) => {
+  return config.root.map((item) => {
+    return config.fields.get(item);
+  });
+};
+
+export const addNewItemToTargetGroup = (state: State, id: ID): State => {
+  const newItemId = crypto.randomUUID();
+  const fields = new Map(state.fields);
   const newItem: FormField = {
     type: "text",
     required: false,
     label: "[Empty]",
-    id: crypto.randomUUID() as string,
   };
-  if (!parentId) {
-    return [...items, newItem];
+  const foundItem = fields.get(id);
+
+  if (foundItem) {
+    (foundItem as GroupFormField).childFieldIds.push(newItemId);
   }
-  return items.map((item) => {
-    if (item.id === parentId && item.type === "group") {
-      return {
-        ...item,
-        childFields: [...(item.childFields || []), newItem],
-      };
-    } else if (item.type === "group") {
-      return {
-        ...item,
-        childFields: addNewItemToTargetGroup(item.childFields, parentId),
-      };
-    }
-    return item;
-  });
+  fields.set(newItemId, newItem);
+
+  return {
+    ...state,
+    root: state.root.includes(id) ? [...state.root, id] : state.root,
+    fields,
+  };
 };
 
 export const editFormField = (
-  items: FormField[],
-  id: string,
+  state: State,
+  id: ID,
   updates: Partial<FormField>,
-): FormField[] => {
-  return items.map((item) => {
-    if (item.id === id) {
-      return {
-        ...item,
-        ...updates,
-        ...(updates.type === "group" ? { childFields: [] } : {}),
-      };
-    } else if (item.type === "group") {
-      return {
-        ...item,
-        childFields: editFormField(item.childFields ?? [], id, updates),
-      };
-    }
-    return item;
-  });
+): State => {
+  const fields = new Map(state.fields);
+
+  const item = fields.get(id);
+
+  if (!item) return state;
+
+  const newItem = { ...item, ...updates };
+  fields.set(id, newItem as FormField);
+
+  return {
+    ...state,
+    fields,
+  };
 };
 
-export const deleteFormField = (
-  items: FormField[],
-  id: string,
-): FormField[] => {
-  return items
-    .filter((item) => item.id !== id)
-    .map((item) =>
-      item.type === "group"
-        ? { ...item, childFields: deleteFormField(item.childFields, id) }
-        : item,
-    );
+export const deleteFormField = (state: State, id: ID): State => {
+  const fields = new Map(state.fields);
+
+  fields.delete(id);
+  fields.forEach((item) => {
+    if (item.type === "group") {
+      const groupItem = item as GroupFormField;
+      groupItem.childFieldIds = groupItem.childFieldIds.filter(
+        (childId) => childId !== id,
+      );
+    }
+  });
+  return {
+    ...state,
+    root: state.root.filter((item) => item !== id),
+    fields,
+  };
 };
