@@ -1,18 +1,18 @@
 import type { PropsWithChildren } from "react";
 import { useFormContext } from "./context/FormContextProvider";
-import { FormFields } from "./FormFields";
+import { FormPreview } from "./FormPreview";
 
 interface OwnProps {}
 
 type Props = PropsWithChildren<OwnProps>;
 
-export function FormFieldsConfig(props: Props) {
+export function FormPreviewConfig(props: Props) {
   const { state } = useFormContext();
 
   return (
-    <div className="p-4 rounded bg-gray-50  w-full">
-      <h2 className="text-2xl mb-2">Form Constructor</h2>
-      <FormFields value={state} />
+    <div className="p-4 rounded w-full">
+      <h2 className="text-2xl mb-2">Form Preview</h2>
+      <FormPreview value={state} />
     </div>
   );
 }
