@@ -1,6 +1,6 @@
 import { FormContextProvider } from "./context";
 import { FormFieldsConfig } from "./FormFieldsConfig";
-import { FormPreviewConfig } from "./form-preview/FormPreviewConfig";
+import { FormPreview } from "./form/FormPreview";
 import { Layout, LayoutItem } from "./layout";
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
           <FormFieldsConfig />
         </LayoutItem>
         <LayoutItem className="bg-gray-50">
-          <FormPreviewConfig />
+          <FormPreview />
         </LayoutItem>
       </Layout>
     </FormContextProvider>

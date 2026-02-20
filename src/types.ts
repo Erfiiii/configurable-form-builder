@@ -6,10 +6,10 @@ interface BaseFormField<T extends FormFieldType> {
   label: string;
 }
 
-interface TextFormField extends BaseFormField<"text"> {
+export interface TextFormField extends BaseFormField<"text"> {
   required: boolean;
 }
-interface NumberFormField extends BaseFormField<"number"> {
+export interface NumberFormField extends BaseFormField<"number"> {
   required: boolean;
   min?: string;
   max?: string;
