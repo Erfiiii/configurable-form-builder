@@ -11,7 +11,10 @@ export const Input = (props: Props) => {
   return (
     <div className="inline-flex gap-2 items-center">
       <label>{label}: </label>
-      <input className={`border-gray-400 rounded ${className}`} {...rest} />
+      <input
+        className={`max-w-32 border-gray-200 rounded-md ${className}`}
+        {...rest}
+      />
     </div>
   );
 };

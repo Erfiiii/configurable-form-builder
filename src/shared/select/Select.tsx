@@ -18,11 +18,13 @@ export function Select<T extends string>(props: Props<T>) {
     <div className="inline-flex gap-2 items-center">
       <label>{label}: </label>
       <select
-        className={`className="border-gray-400 rounded ${className}`}
+        className={`w-32 border-gray-200 rounded-md appearance-none outline-none ${className}`}
         {...rest}
       >
         {options.map((item) => (
-          <option value={item.value}>{item.label}</option>
+          <option key={item.value} value={item.value}>
+            {item.label}
+          </option>
         ))}
       </select>
     </div>
