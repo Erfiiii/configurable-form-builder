@@ -1,7 +1,7 @@
 import { type PropsWithChildren } from "react";
 import { FormFields } from "./FormFields";
 import type { FormFieldType, ID } from "./types";
-import { TrashIcon } from "./assets";
+import { ArrowDown, TrashIcon } from "./assets";
 import { useFormContext } from "./context";
 import { Select } from "./shared/select";
 import { Input } from "./shared/input";
@@ -109,6 +109,18 @@ export function FormFieldItem(props: Props) {
           onClick={() => dispatch({ type: "REMOVE_FIELD", id: value })}
         >
           <TrashIcon />
+        </button>
+        <button
+          className=" text-cyan-700 cursor-pointer"
+          onClick={() => dispatch({ type: "MOVE_FIELD_DOWN", id: value })}
+        >
+          <ArrowDown />
+        </button>
+        <button
+          className=" text-cyan-700 cursor-pointer"
+          onClick={() => dispatch({ type: "MOVE_FIELD_UP", id: value })}
+        >
+          <ArrowDown style={{ transform: "rotate(180deg)" }} />
         </button>
       </div>
       {field.type === "group" && (

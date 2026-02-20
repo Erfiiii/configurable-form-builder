@@ -116,3 +116,63 @@ export const deleteFormField = (state: State, id: ID): State => {
     fields,
   };
 };
+
+const exchange = (arr: any[], i: number, j: number) => {
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+};
+
+export const moveFormFieldUp = (state: State, id: ID): State => {
+  const fields = new Map(state.fields);
+  let root = [...state.root];
+
+  fields.forEach((item) => {
+    if (item.type === "group") {
+      const groupItem = item as GroupFormField;
+      const index = groupItem.childFieldIds.findIndex(
+        (childId) => childId === id,
+      );
+      if (index > 0) {
+        exchange(groupItem.childFieldIds, index - 1, index);
+      }
+    }
+  });
+
+  const rootIndex = root.findIndex((item) => item === id);
+  if (rootIndex > 0) {
+    exchange(root, rootIndex - 1, rootIndex);
+  }
+
+  return {
+    ...state,
+    fields,
+    root,
+  };
+};
+
+export const moveFormFieldDown = (state: State, id: ID): State => {
+  const fields = new Map(state.fields);
+  let root = [...state.root];
+
+  fields.forEach((item) => {
+    if (item.type === "group") {
+      const groupItem = item as GroupFormField;
+      const index = groupItem.childFieldIds.findIndex(
+        (childId) => childId === id,
+      );
+      if (index !== -1 && index < groupItem.childFieldIds.length - 1) {
+        exchange(groupItem.childFieldIds, index, index + 1);
+      }
+    }
+  });
+
+  const rootIndex = root.findIndex((item) => item === id);
+  if (rootIndex !== -1 && rootIndex < root.length - 1) {
+    exchange(root, rootIndex, rootIndex + 1);
+  }
+
+  return {
+    ...state,
+    fields,
+    root,
+  };
+};
