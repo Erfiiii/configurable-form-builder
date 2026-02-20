@@ -1,4 +1,10 @@
-import type { FormField, GroupFormField, ID, State } from "./types";
+import type {
+  FormField,
+  GroupFormField,
+  ID,
+  State,
+  TextFormField,
+} from "./types";
 
 export const getChildren = (
   state: State,
@@ -49,20 +55,42 @@ export const addNewItemToTargetGroup = (state: State, id?: ID): State => {
 export const editFormField = (
   state: State,
   id: ID,
-  updates: Partial<FormField>,
+  update: Partial<FormField>,
 ): State => {
   const fields = new Map(state.fields);
 
   const item = fields.get(id);
 
   if (!item) return state;
-
-  const newItem = {
-    ...item,
-    ...(updates.type === "group" ? { childFieldIds: [] } : {}),
-    ...updates,
-  };
-  fields.set(id, newItem as FormField);
+  if (!update.type) {
+    fields.set(id, {
+      ...item,
+      ...update,
+    } as FormField);
+  } else if (update.type === "group") {
+    const newItem: GroupFormField = {
+      type: "group",
+      label: item.label,
+      childFieldIds: [],
+    };
+    fields.set(id, newItem);
+  } else if (update.type === "text") {
+    const newItem: TextFormField = {
+      type: "text",
+      label: item.label,
+      required: false,
+    };
+    fields.set(id, newItem);
+  } else if (update.type === "number") {
+    const newItem: FormField = {
+      type: "number",
+      label: item.label,
+      required: false,
+      min: undefined,
+      max: undefined,
+    };
+    fields.set(id, newItem);
+  }
 
   return {
     ...state,

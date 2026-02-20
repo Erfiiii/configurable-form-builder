@@ -4,18 +4,20 @@ export const convertStateToJson = (state: State) => {
   const { root, fields } = state;
 
   const buildJson = (ids: ID[]): any[] => {
-    return ids.map((id) => {
-      const field = fields.get(id);
-      if (!field) return null;
-      if (field.type === "group") {
-        const groupField = field as GroupFormField;
-        return {
-          ...groupField,
-          childFields: buildJson(groupField.childFieldIds),
-        };
-      }
-      return field;
-    });
+    return ids
+      .map((id) => {
+        const field = fields.get(id);
+        if (!field) return null;
+        if (field.type === "group") {
+          const { childFieldIds, ...rest } = field as GroupFormField;
+          return {
+            ...rest,
+            childFields: buildJson(childFieldIds),
+          };
+        }
+        return field;
+      })
+      .filter((item) => item !== null);
   };
 
   return JSON.stringify(buildJson(root), null, 2);
