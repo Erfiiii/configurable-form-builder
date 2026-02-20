@@ -4,10 +4,10 @@ import {
   useContext,
   type PropsWithChildren,
 } from "react";
-import type { FormField } from "../types";
+import type { State } from "../types";
 import { reducer, type Action } from "../reducer";
 
-type FormContextType = { state: FormField[]; dispatch: React.Dispatch<Action> };
+type FormContextType = { state: State; dispatch: React.Dispatch<Action> };
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
@@ -29,7 +29,10 @@ interface OwnProps {}
 type Props = PropsWithChildren<OwnProps>;
 
 export function FormContextProvider(props: Props) {
-  const [state, dispatch] = useReducer(reducer, []);
+  const [state, dispatch] = useReducer(reducer, {
+    fields: new Map(),
+    root: [],
+  });
 
   return (
     <FormContext.Provider value={{ state, dispatch }}>

@@ -1,4 +1,4 @@
-import type { FormField } from "./types";
+import type { FormField, ID, State } from "./types";
 import {
   addNewItemToTargetGroup,
   deleteFormField,
@@ -6,18 +6,18 @@ import {
 } from "./utils";
 
 export type Action =
-  | { type: "ADD_FIELD"; parentId?: string }
-  | { type: "REMOVE_FIELD"; id: string }
-  | { type: "UPDATE_FIELD"; id: string; updates: Partial<FormField> }
-  | { type: "SET_FORM"; payload: FormField[] };
+  | { type: "ADD_FIELD"; id?: ID }
+  | { type: "REMOVE_FIELD"; id: ID }
+  | { type: "UPDATE_FIELD"; id: ID; updates: Partial<FormField> }
+  | { type: "SET_FORM"; payload: State };
 
-export function reducer(state: FormField[], action: Action): FormField[] {
+export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_FORM":
       return action.payload;
 
     case "ADD_FIELD":
-      return addNewItemToTargetGroup(state, action.parentId);
+      return addNewItemToTargetGroup(state, action.id);
 
     case "REMOVE_FIELD":
       return deleteFormField(state, action.id);

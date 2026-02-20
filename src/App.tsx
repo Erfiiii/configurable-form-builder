@@ -1,6 +1,6 @@
 import { FormContextProvider } from "./context";
 import { FormFieldsConfig } from "./FormFieldsConfig";
-import { FormPreviewConfig } from "./FormPreviewConfig";
+import { FormPreviewConfig } from "./form-preview/FormPreviewConfig";
 import { Layout, LayoutItem } from "./layout";
 
 function App() {

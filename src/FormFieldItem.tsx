@@ -1,20 +1,20 @@
 import { type PropsWithChildren } from "react";
 import { FormFields } from "./FormFields";
-import type { FormField, FormFieldType } from "./types";
+import type { FormFieldType, ID } from "./types";
 import { TrashIcon } from "./assets";
 import { useFormContext } from "./context";
 import { Select } from "./shared/select";
 import { Input } from "./shared/input";
 
 interface OwnProps {
-  value: FormField;
+  value: ID;
 }
 
 type Props = PropsWithChildren<OwnProps>;
 
 export function FormFieldItem(props: Props) {
   const { value } = props;
-  const { dispatch } = useFormContext();
+  const { state, dispatch } = useFormContext();
   const typeOptions = [
     {
       label: "Text",
@@ -29,17 +29,23 @@ export function FormFieldItem(props: Props) {
       value: "group",
     },
   ];
+
+  const field = state.fields.get(value);
+  if (!field) {
+    return null;
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2 text-sm my-2">
         <Select
           label="Type"
           options={typeOptions}
-          value={value.type}
+          value={field.type}
           onChange={(e) =>
             dispatch({
               type: "UPDATE_FIELD",
-              id: value.id,
+              id: value,
               updates: { type: e.target.value as FormFieldType },
             })
           }
@@ -50,34 +56,34 @@ export function FormFieldItem(props: Props) {
           onChange={(e) =>
             dispatch({
               type: "UPDATE_FIELD",
-              id: value.id,
+              id: value,
               updates: { label: e.target.value },
             })
           }
         />
-        {value.type !== "group" && (
+        {field.type !== "group" && (
           <Input
             label="required"
-            checked={value.required}
+            checked={field.required}
             type="checkbox"
             className="border-gray-400 rounded"
             onChange={() =>
               dispatch({
                 type: "UPDATE_FIELD",
-                id: value.id,
-                updates: { required: !value.required },
+                id: value,
+                updates: { required: !field.required },
               })
             }
           />
         )}
-        {value.type === "number" && (
+        {field.type === "number" && (
           <div className="inline-flex gap-2">
             <Input
               label="Min"
               onChange={(e) =>
                 dispatch({
                   type: "UPDATE_FIELD",
-                  id: value.id,
+                  id: value,
                   updates: { min: e.target.value },
                 })
               }
@@ -89,7 +95,7 @@ export function FormFieldItem(props: Props) {
               onChange={(e) =>
                 dispatch({
                   type: "UPDATE_FIELD",
-                  id: value.id,
+                  id: value,
                   updates: { max: e.target.value },
                 })
               }
@@ -100,13 +106,13 @@ export function FormFieldItem(props: Props) {
         )}
         <button
           className=" text-red-500 cursor-pointer"
-          onClick={() => dispatch({ type: "REMOVE_FIELD", id: value.id })}
+          onClick={() => dispatch({ type: "REMOVE_FIELD", id: value })}
         >
           <TrashIcon />
         </button>
       </div>
-      {value.type === "group" && (
-        <FormFields value={value.childFields} id={value.id} />
+      {field.type === "group" && (
+        <FormFields value={field.childFieldIds} id={value} />
       )}
     </div>
   );

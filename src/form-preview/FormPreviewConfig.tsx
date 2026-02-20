@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { useFormContext } from "./context/FormContextProvider";
+import { useFormContext } from "../context/FormContextProvider";
 import { FormPreview } from "./FormPreview";
 
 interface OwnProps {}
@@ -12,7 +12,7 @@ export function FormPreviewConfig(props: Props) {
   return (
     <div className="p-4 rounded w-full">
       <h2 className="text-2xl mb-2">Form Preview</h2>
-      <FormPreview value={state} />
+      <FormPreview value={state.root} />
     </div>
   );
 }

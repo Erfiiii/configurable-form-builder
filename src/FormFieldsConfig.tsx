@@ -8,11 +8,10 @@ type Props = PropsWithChildren<OwnProps>;
 
 export function FormFieldsConfig(props: Props) {
   const { state } = useFormContext();
-
   return (
     <div className="p-4 rounded bg-gray-50  w-full">
       <h2 className="text-2xl mb-2">Form Constructor</h2>
-      <FormFields value={state} />
+      <FormFields value={state.root} />
     </div>
   );
 }

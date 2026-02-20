@@ -1,21 +1,23 @@
 import type { FormField, GroupFormField, ID, State } from "./types";
 
 export const getChildren = (
-  config: State,
+  state: State,
   groupField: GroupFormField,
 ): FormField[] => {
   return groupField.childFieldIds
-    .map((item) => config.fields.get(item))
+    .map((item) => state.fields.get(item))
     .filter((item) => item !== undefined);
 };
 
-export const getRootFields = (config: State) => {
-  return config.root.map((item) => {
-    return config.fields.get(item);
-  });
+export const getRootFields = (state: State) => {
+  return state.root
+    .map((item) => {
+      return state.fields.get(item);
+    })
+    .filter((item) => item !== undefined) as FormField[];
 };
 
-export const addNewItemToTargetGroup = (state: State, id: ID): State => {
+export const addNewItemToTargetGroup = (state: State, id?: ID): State => {
   const newItemId = crypto.randomUUID();
   const fields = new Map(state.fields);
   const newItem: FormField = {
@@ -23,6 +25,14 @@ export const addNewItemToTargetGroup = (state: State, id: ID): State => {
     required: false,
     label: "[Empty]",
   };
+  if (!id) {
+    fields.set(newItemId, newItem);
+    return {
+      ...state,
+      root: [...state.root, newItemId],
+      fields,
+    };
+  }
   const foundItem = fields.get(id);
 
   if (foundItem) {
@@ -32,7 +42,6 @@ export const addNewItemToTargetGroup = (state: State, id: ID): State => {
 
   return {
     ...state,
-    root: state.root.includes(id) ? [...state.root, id] : state.root,
     fields,
   };
 };
@@ -48,7 +57,11 @@ export const editFormField = (
 
   if (!item) return state;
 
-  const newItem = { ...item, ...updates };
+  const newItem = {
+    ...item,
+    ...(updates.type === "group" ? { childFieldIds: [] } : {}),
+    ...updates,
+  };
   fields.set(id, newItem as FormField);
 
   return {
