@@ -35,7 +35,10 @@ export function FormPreviewItem(props: Props) {
             required={field.required}
           />
         ) : (
-          <FormPreview value={field.childFieldIds} />
+          <div className="flex flex-col gap-2">
+            <span className="font-medium">{field.label}:</span>
+            <FormPreview value={field.childFieldIds} />
+          </div>
         )}
       </div>
     </div>
